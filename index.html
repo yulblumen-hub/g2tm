@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G2tM — Get to the Moon</title>
+<meta name="description" content="Un examen de preguntas capciosas. Cada región de la Tierra tiene su sensei. Si aprobás, despegás. Si pifiás, volvés a empezar con una figura encima.">
+<meta name="theme-color" content="#100d0a">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div id="app">
+
+  <!-- TÍTULO -->
+  <section class="screen on" id="s-title">
+    <div class="title-wrap">
+      <div class="logo">G<span>2</span>tM</div>
+      <div class="tagline">Get to the Moon — y bastante más lejos</div>
+
+      <div class="rules">
+        <p>Cada región tiene <b>un sensei</b> y <b>tres preguntas</b>. No hay respuestas correctas: hay respuestas que ese sensei aprueba y otras que no. Lo que salva en la India te hunde en Texas.</p>
+        <p>Aprobás seis regiones de la Tierra y despega el cohete. Ahí <b>el juego cambia de formato</b> y las preguntas se ponen serias.</p>
+        <p>Si pifiás, <b>respawneás en la Tierra con una figura encima</b>. Las figuras se acumulan. Algunas ayudan. Una no hace absolutamente nada.</p>
+      </div>
+
+      <button class="cta" id="btn-start">EMPEZAR</button>
+      <div style="margin-top:14px"><button class="ghost" id="btn-reset-title">borrar partida guardada</button></div>
+    </div>
+  </section>
+
+  <!-- MAPA -->
+  <section class="screen" id="s-map">
+    <h1 id="map-title">Tierra</h1>
+    <p class="dim small" id="map-sub"></p>
+    <div class="map" id="map"></div>
+    <footer>
+      <button class="ghost" id="btn-figs">mis figuras</button>
+      <button class="ghost" id="btn-reset">reiniciar</button>
+    </footer>
+  </section>
+
+  <!-- EXAMEN -->
+  <section class="screen" id="s-exam">
+    <div class="sensei-bar">
+      <div class="ico" id="e-ico"></div>
+      <div>
+        <div class="nm" id="e-nm"></div>
+        <div class="tt" id="e-tt"></div>
+      </div>
+      <div class="prog" id="e-prog"></div>
+    </div>
+    <div id="e-body"></div>
+  </section>
+
+  <!-- VEREDICTO -->
+  <section class="screen" id="s-verdict">
+    <div class="verdict" id="v-box">
+      <div class="stamp" id="v-stamp"></div>
+      <div class="score" id="v-score"></div>
+      <p class="pre" id="v-text"></p>
+      <div id="v-extra"></div>
+      <div style="margin-top:26px"><button class="cta" id="btn-next"></button></div>
+    </div>
+  </section>
+
+  <!-- FIGURAS -->
+  <section class="screen" id="s-figs">
+    <h1>Figuras</h1>
+    <p class="dim small">Cada muerte deja una. No se eligen.</p>
+    <div id="figs-list"></div>
+    <footer><button class="ghost" id="btn-back">← volver</button></footer>
+  </section>
+
+  <!-- FINAL -->
+  <section class="screen" id="s-end">
+    <div class="end">
+      <div class="big" id="end-t"></div>
+      <p class="body" id="end-d"></p>
+      <p class="dim small" id="end-stats" style="margin-top:26px"></p>
+      <div style="margin-top:20px"><button class="cta" id="btn-again">DE NUEVO</button></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- SECUENCIA DE LANZAMIENTO -->
+<div id="launch">
+  <div id="launch-inner"></div>
+  <div class="launch-txt" id="launch-txt"></div>
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
