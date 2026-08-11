@@ -42,7 +42,12 @@ html, body {
 #stars { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.4s ease; z-index: 0; }
 body.espacio #stars { opacity: 1; }
 
-#app { position: relative; z-index: 1; max-width: 660px; margin: 0 auto; padding: 32px 20px 80px; }
+/* los env() dan aire a la muesca y a la barra del gesto cuando corre instalada en el celu */
+#app {
+  position: relative; z-index: 1; max-width: 660px; margin: 0 auto;
+  padding: calc(32px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-right, 0px))
+           calc(80px + env(safe-area-inset-bottom, 0px)) calc(20px + env(safe-area-inset-left, 0px));
+}
 
 /* ── tipografía ── */
 h1 { font-size: 2.1rem; letter-spacing: .02em; margin: 0 0 4px; font-weight: 600; }
@@ -195,7 +200,10 @@ body.espacio .reply { font-style: normal; }
 footer { margin-top: 42px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; gap: 16px; align-items: center; }
 
 @media (max-width: 500px) {
-  #app { padding: 22px 15px 60px; }
+  #app {
+    padding: calc(22px + env(safe-area-inset-top, 0px)) calc(15px + env(safe-area-inset-right, 0px))
+             calc(60px + env(safe-area-inset-bottom, 0px)) calc(15px + env(safe-area-inset-left, 0px));
+  }
   .logo { font-size: 3.2rem; }
   .q { font-size: 1.15rem; }
   body { font-size: 16px; }

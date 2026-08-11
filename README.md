@@ -14,6 +14,12 @@ Está online en GitHub Pages. También funciona abriendo `index.html`, o con cua
 python3 -m http.server 8080
 ```
 
+## En el celular
+
+Desde el navegador: *Compartir → Agregar a inicio* (iPhone) o *Instalar app* (Android). Queda con su ícono y su nombre, abre a pantalla completa y **funciona sin internet**.
+
+> Si cambiás cualquier archivo del juego, subí el número de `CACHE` en `sw.js`. Si no, los celulares que ya la tienen instalada siguen abriendo la versión vieja.
+
 ## Cómo está hecho
 
 HTML + CSS + JS a mano. Sin dependencias, sin build, sin backend, sin costo. El progreso se guarda en `localStorage`.
@@ -21,6 +27,8 @@ HTML + CSS + JS a mano. Sin dependencias, sin build, sin backend, sin costo. El 
 - `js/content.js` — todo el juego: senseis, preguntas, puntajes, réplicas, figuras.
 - `js/game.js` — el motor: mapa, modos de pregunta, veredictos, caídas, lanzamiento.
 - `css/styles.css` — dos temas (Tierra y espacio) que cambian solos al despegar.
+- `sw.js` + `manifest.webmanifest` — lo que la vuelve instalable y offline.
+- `icon.svg` (pestaña), `icon-app.svg` y los `icon-*.png` (ícono de la app instalada).
 
 ## Agregar un planeta
 

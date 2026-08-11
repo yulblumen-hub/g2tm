@@ -8,6 +8,14 @@
 <meta name="theme-color" content="#100d0a">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+
+<!-- instalada en el celu: ícono, nombre y pantalla completa -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="G2tM">
 </head>
 <body>
 
@@ -103,5 +111,10 @@
 
 <script src="js/content.js"></script>
 <script src="js/game.js"></script>
+<script>
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
 </body>
 </html>
