@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>G2tM — Get to the Moon</title>
-<meta name="description" content="Un examen de preguntas capciosas. Cada región de la Tierra tiene su sensei. Si aprobás, despegás. Si pifiás, volvés a empezar con una figura encima.">
+<meta name="description" content="Un examen escrito. Cada región tiene su maestro y su manera de juzgarte. Si aprobás, despegás. Si pifiás, volvés a la Tierra con una figura encima.">
 <meta name="theme-color" content="#100d0a">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -38,9 +38,9 @@
       <div class="tagline">Get to the Moon — y bastante más lejos</div>
 
       <div class="rules">
-        <p>Cada región tiene <b>un sensei</b> y <b>tres preguntas</b>. No hay respuestas correctas: hay respuestas que ese sensei aprueba y otras que no. Lo que salva en la India te hunde en Texas.</p>
-        <p>Aprobás seis regiones de la Tierra y despega el cohete. Ahí <b>el juego cambia de formato</b> y las preguntas se ponen serias.</p>
-        <p>Si pifiás, <b>respawneás en la Tierra con una figura encima</b>. Las figuras se acumulan. Algunas ayudan. Una no hace absolutamente nada.</p>
+        <p>Cada región tiene <b>un maestro</b>. Te hace tres preguntas y vos <b>las contestás escribiendo</b>. No hay opciones ni respuestas correctas: cada maestro juzga a su manera, y lo que te salva con Buda te hunde con Lucifer.</p>
+        <p><b>Tocá al maestro.</b> Todos reaccionan, y ninguno reacciona igual.</p>
+        <p>Aprobás las ocho regiones de la Tierra y despega el cohete. Si pifiás, <b>volvés a la Tierra con una figura encima</b>. Las preguntas no se repiten hasta que se agota el banco.</p>
       </div>
 
       <button class="cta" id="btn-start">EMPEZAR</button>
@@ -61,11 +61,11 @@
 
   <!-- EXAMEN -->
   <section class="screen" id="s-exam">
+    <div class="escena" id="e-escena"></div>
     <div class="sensei-bar">
-      <div class="ico" id="e-ico"></div>
       <div>
-        <div class="nm" id="e-nm"></div>
-        <div class="tt" id="e-tt"></div>
+        <div class="nm" id="e-nombre"></div>
+        <div class="tt" id="e-titulo"></div>
       </div>
       <div class="prog" id="e-prog"></div>
     </div>
@@ -86,7 +86,7 @@
   <!-- FIGURAS -->
   <section class="screen" id="s-figs">
     <h1>Figuras</h1>
-    <p class="dim small">Cada muerte deja una. No se eligen.</p>
+    <p class="dim small">Cada caída deja una. No se eligen.</p>
     <div id="figs-list"></div>
     <footer><button class="ghost" id="btn-back">← volver</button></footer>
   </section>
@@ -95,6 +95,7 @@
   <section class="screen" id="s-end">
     <div class="end">
       <div class="big" id="end-t"></div>
+      <p class="eco" id="end-eco"></p>
       <p class="body" id="end-d"></p>
       <p class="dim small" id="end-stats" style="margin-top:26px"></p>
       <div style="margin-top:20px"><button class="cta" id="btn-again">DE NUEVO</button></div>
@@ -109,6 +110,8 @@
   <div class="launch-txt" id="launch-txt"></div>
 </div>
 
+<script src="js/art.js"></script>
+<script src="js/juez.js"></script>
 <script src="js/content.js"></script>
 <script src="js/game.js"></script>
 <script>

@@ -1,31 +1,32 @@
 /* G2tM — motor */
 
-const SAVE = 'g2tm.v1';
+const SAVE = 'g2tm.v2';
 const $ = id => document.getElementById(id);
 
 let S = load();
-let cur = null;      // nodo actual
-let qi = 0;          // índice de pregunta
-let pts = 0;         // puntos de la región
-let prevChoice = ''; // para el eco de Saturno
-let usedRetry = false, usedDescarte = false;
-let tmr = null;
+let cur = null;      // maestro actual
+let ronda = [];      // índices de las preguntas de esta ronda
+let qi = 0;
+let pts = 0;
+let usedRetry = false;
+let ultimoToque = -1;
 
 function load() {
   try {
     const raw = JSON.parse(localStorage.getItem(SAVE));
-    if (raw && Array.isArray(raw.done)) return raw;
+    if (raw && Array.isArray(raw.done)) return Object.assign({ vistas: {} }, raw);
   } catch (e) {}
-  return { done: [], figuras: [], deaths: 0, seen: false };
+  return { done: [], figuras: [], deaths: 0, vistas: {}, seen: false };
 }
 function save() { try { localStorage.setItem(SAVE, JSON.stringify(S)); } catch (e) {} }
 
 const has = p => S.figuras.some(f => FIGURAS.find(x => x.id === f)?.power === p);
-const nodo = id => NODOS.find(n => n.id === id);
+const maestro = id => MAESTROS.find(m => m.id === id);
 const hecho = id => S.done.includes(id);
+const azar = a => a[Math.floor(Math.random() * a.length)];
 
-function proximo() { return NODOS.find(n => !hecho(n.id)); }
-function enEspacio() { const p = proximo(); return p ? p.zone === 'espacio' : true; }
+function proximo() { return MAESTROS.find(m => !hecho(m.id)); }
+function enEspacio() { const p = proximo(); return p ? p.zona === 'espacio' : true; }
 
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
@@ -34,251 +35,210 @@ function show(id) {
 }
 function tema() { document.body.classList.toggle('espacio', enEspacio()); }
 
+/* ═══════════ ESCENA ═══════════ */
+
+function pintarEscena(m, cont) {
+  cont.innerHTML = `
+    <svg class="bg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${FONDOS[m.id] || ''}</svg>
+    <svg class="fig" viewBox="0 0 200 260" role="img" aria-label="${m.nombre}">${RETRATOS[m.id] || ''}</svg>
+    <div class="dialogo" id="dialogo"></div>`;
+  const fig = cont.querySelector('.fig');
+  fig.addEventListener('click', () => tocar(m, cont, fig));
+  cont.classList.add('tocable');
+}
+
+function tocar(m, cont, fig) {
+  let i = Math.floor(Math.random() * m.toques.length);
+  if (m.toques.length > 1 && i === ultimoToque) i = (i + 1) % m.toques.length;
+  ultimoToque = i;
+  const t = m.toques[i];
+
+  fig.classList.remove(...[...fig.classList].filter(c => c.startsWith('r-')));
+  void fig.offsetWidth;                 // reinicia la animación aunque sea la misma
+  fig.classList.add('r-' + t.anim);
+  cont.classList.remove('sacude');
+  void cont.offsetWidth;
+  if (t.anim === 'furia' || t.anim === 'katsu') cont.classList.add('sacude');
+
+  const d = $('dialogo');
+  if (d) {
+    d.textContent = t.t;
+    d.classList.remove('on'); void d.offsetWidth; d.classList.add('on');
+    clearTimeout(d._t);
+    d._t = setTimeout(() => d.classList.remove('on'), 5200);
+  }
+}
+
 /* ═══════════ MAPA ═══════════ */
 
 function renderMap() {
-  clearTimer();
   tema();
   const espacio = enEspacio();
   $('map-title').textContent = espacio ? 'El sistema' : 'Tierra';
   const p = proximo();
   $('map-sub').textContent = p
-    ? `${S.done.length} de ${NODOS.length} aprobadas · ${S.deaths} ${S.deaths === 1 ? 'caída' : 'caídas'}${S.figuras.length ? ' · ' + S.figuras.length + (S.figuras.length === 1 ? ' figura' : ' figuras') : ''}`
+    ? `${S.done.length} de ${MAESTROS.length} · ${S.deaths} ${S.deaths === 1 ? 'caída' : 'caídas'}${S.figuras.length ? ' · ' + S.figuras.length + (S.figuras.length === 1 ? ' figura' : ' figuras') : ''}`
     : 'Terminaste.';
 
-  const m = $('map'); m.innerHTML = '';
-  let puestoDivisor = false;
-  NODOS.forEach(n => {
-    if (n.zone === 'espacio' && !puestoDivisor) {
-      puestoDivisor = true;
+  const cont = $('map'); cont.innerHTML = '';
+  let divisor = false;
+  MAESTROS.forEach(m => {
+    if (m.zona === 'espacio' && !divisor) {
+      divisor = true;
       const d = document.createElement('div');
       d.className = 'divider';
-      d.textContent = hecho('texas') ? 'órbita' : 'fuera de alcance';
-      m.appendChild(d);
+      d.textContent = hecho('hank') ? 'órbita' : 'fuera de alcance';
+      cont.appendChild(d);
     }
-    const done = hecho(n.id);
-    const now = !done && p && p.id === n.id;
+    const done = hecho(m.id);
+    const now = !done && p && p.id === m.id;
     const el = document.createElement('div');
     el.className = 'node ' + (done ? 'done' : now ? 'now' : 'lock');
     el.innerHTML = `
-      <div class="ico">${done || now ? n.icon : '·'}</div>
+      <div class="mini">${done || now ? `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">${FONDOS[m.id] || ''}</svg><svg class="mf" viewBox="0 0 200 260">${RETRATOS[m.id] || ''}</svg>` : ''}</div>
       <div class="meta">
-        <div class="rg">${done || now ? n.region : '???'}</div>
-        <div class="sn">${done || now ? n.sensei + ' — ' + n.title : 'sin datos'}</div>
+        <div class="rg">${done || now ? m.region : '???'}</div>
+        <div class="sn">${done || now ? m.nombre + ' — ' + m.titulo : 'sin datos'}</div>
       </div>
       <div class="st">${done ? 'aprobado' : now ? 'acá estás' : 'cerrado'}</div>`;
-    if (now) el.onclick = () => entrar(n);
-    m.appendChild(el);
+    if (now) el.onclick = () => entrar(m);
+    cont.appendChild(el);
   });
   show('s-map');
 }
 
 /* ═══════════ EXAMEN ═══════════ */
 
-function entrar(n) {
-  cur = n; qi = 0; pts = 0; prevChoice = '';
-  usedRetry = false; usedDescarte = false;
-  $('e-ico').textContent = n.icon;
-  $('e-nm').textContent = n.sensei;
-  $('e-tt').textContent = n.title;
-  intro(n);
+function sortear(m) {
+  const total = m.preguntas.length;
+  let vistas = S.vistas[m.id] || [];
+  let libres = [...Array(total).keys()].filter(i => !vistas.includes(i));
+  if (libres.length < m.preguntasPorRonda) {   // se agotó el banco: vuelve a empezar
+    vistas = []; libres = [...Array(total).keys()];
+  }
+  const elegidas = [];
+  while (elegidas.length < Math.min(m.preguntasPorRonda, libres.length)) {
+    const i = Math.floor(Math.random() * libres.length);
+    elegidas.push(libres.splice(i, 1)[0]);
+  }
+  S.vistas[m.id] = vistas.concat(elegidas);
+  save();
+  return elegidas;
 }
 
-function intro(n) {
+function entrar(m) {
+  cur = m; qi = 0; pts = 0; usedRetry = false; ultimoToque = -1;
+  ronda = sortear(m);
+  $('e-nombre').textContent = m.nombre;
+  $('e-titulo').textContent = m.titulo;
+  pintarEscena(m, $('e-escena'));
   $('e-prog').textContent = '';
   $('e-body').innerHTML = `
-    <p class="pre">${n.intro}</p>
-    <div style="margin-top:26px"><button class="cta" id="go">${n.mode === 'final' ? 'SENTARSE' : 'EMPEZAR'}</button></div>`;
-  $('go').onclick = () => pregunta();
+    <p class="pre intro">${m.intro}</p>
+    <p class="tip small dim">Tocá al maestro. Cada uno reacciona a su manera.</p>
+    <button class="cta" id="go">${m.final ? 'SENTARSE' : 'EMPEZAR'}</button>`;
+  $('go').onclick = pregunta;
   show('s-exam');
 }
 
 function pregunta() {
-  clearTimer();
-  const n = cur, q = n.questions[qi];
-  $('e-prog').textContent = n.questions.length > 1 ? `${qi + 1}/${n.questions.length}` : '';
+  const m = cur, q = m.preguntas[ronda[qi]];
+  $('e-prog').textContent = ronda.length > 1 ? `${qi + 1}/${ronda.length}` : '';
   const b = $('e-body');
   b.innerHTML = '';
-
-  // texto de la pregunta (con eco de Saturno)
-  let texto = q.q;
-  if (n.echo && texto.includes('{PREV}')) {
-    texto = texto.replace('{PREV}', prevChoice.replace(/\.$/, ''));
-  }
-
-  if (n.mode === 'timed') {
-    const seg = n.time + (has('tiempo') ? 6 : 0);
-    const t = document.createElement('div');
-    t.className = 'timer';
-    t.innerHTML = '<i></i>';
-    b.appendChild(t);
-    correrReloj(t, seg, seTermino);
-  }
-
-  const h = document.createElement('div');
-  h.className = 'q';
-  h.textContent = texto;
-  b.appendChild(h);
 
   if (has('criterio')) {
     const c = document.createElement('div');
     c.className = 'criterio';
-    c.innerHTML = `<b>🎃 El Espantapájaros:</b> ${n.criterio}`;
+    c.innerHTML = `<b>🎃 El Espantapájaros:</b> ${m.criterio}`;
     b.appendChild(c);
   }
 
-  if (n.mode === 'text') return modoTexto(b, q);
-  if (n.mode === 'multi') return modoMulti(b, q);
-  return modoOpciones(b, q);
-}
+  const h = document.createElement('div');
+  h.className = 'q';
+  h.textContent = q;
+  b.appendChild(h);
 
-/* — opciones simples (y timed y final) — */
-function modoOpciones(b, q) {
-  const box = document.createElement('div');
-  box.className = 'opts';
-  const descartar = has('descarte') && !usedDescarte
-    ? q.options.findIndex(o => o.s === -1) : -1;
-  if (descartar > -1) usedDescarte = true;
-
-  q.options.forEach((o, i) => {
-    const bt = document.createElement('button');
-    bt.textContent = o.t;
-    if (i === descartar) { bt.classList.add('dead'); bt.disabled = true; bt.title = 'El Niño la descartó'; }
-    bt.onclick = () => { bt.classList.add('sel'); elegir(o, box); };
-    box.appendChild(bt);
-  });
-  b.appendChild(box);
-  if (descartar > -1) {
-    const nt = document.createElement('p');
-    nt.className = 'dim small';
-    nt.style.marginTop = '10px';
-    nt.textContent = '🧒 El Niño tachó una. No dice por qué.';
-    b.appendChild(nt);
-  }
-}
-
-function elegir(o, box) {
-  clearTimer();
-  box.querySelectorAll('button').forEach(x => x.disabled = true);
-  prevChoice = o.t;
-  if (cur.mode === 'final') return final(o.end);
-  aplicar(o.s, o.r);
-}
-
-function seTermino() {
-  const b = $('e-body');
-  b.querySelectorAll('.opts button').forEach(x => x.disabled = true);
-  const q = cur.questions[qi];
-  const callado = q.options.find(o => /callado|callar/i.test(o.t));
-  if (callado) { prevChoice = callado.t; aplicar(callado.s, callado.r || 'No dijiste nada. Acá eso vale.'); }
-  else { prevChoice = '(silencio)'; aplicar(-1, 'Se acabó el tiempo. El silencio no siempre alcanza.'); }
-}
-
-/* — texto libre (Marte) — */
-function modoTexto(b, q) {
   const w = document.createElement('div');
-  w.className = 'txt';
-  w.innerHTML = `<input id="ti" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="una palabra"><button id="tb">ENVIAR</button>`;
+  w.className = 'escribir';
+  w.innerHTML = `
+    <textarea id="ta" rows="3" placeholder="Escribí tu respuesta…" autocomplete="off" spellcheck="false"></textarea>
+    <div class="barra">
+      <span class="dim small" id="cuenta"></span>
+      <button class="cta" id="env">RESPONDER</button>
+    </div>`;
   b.appendChild(w);
-  const inp = $('ti');
-  inp.focus();
-  const enviar = () => {
-    const v = norm(inp.value);
-    if (!v) return;
-    inp.disabled = true; $('tb').disabled = true;
-    prevChoice = inp.value;
-    if (q.good.some(g => match(v, norm(g)))) aplicar(1, q.rGood);
-    else if (q.bad.some(g => match(v, norm(g)))) aplicar(-1, q.rBad);
-    else aplicar(0, q.rMeh);
-  };
-  $('tb').onclick = enviar;
-  inp.onkeydown = e => { if (e.key === 'Enter') enviar(); };
-}
-const norm = s => (s || '').toLowerCase().trim()
-  .normalize('NFD').replace(/[̀-ͯ]/g, '')
-  .replace(/[^a-z0-9% ]/g, '').replace(/\s+/g, ' ');
-const match = (v, g) => v === g || v.split(' ').includes(g) || (g.includes(' ') && v.includes(g));
 
-/* — doble selección (Júpiter) — */
-function modoMulti(b, q) {
-  const sel = [];
-  const box = document.createElement('div');
-  box.className = 'opts';
-  q.options.forEach((o, i) => {
-    const bt = document.createElement('button');
-    bt.textContent = o.t;
-    bt.onclick = () => {
-      const k = String(i);
-      const at = sel.indexOf(k);
-      if (at > -1) { sel.splice(at, 1); bt.classList.remove('sel'); }
-      else if (sel.length < 2) { sel.push(k); bt.classList.add('sel'); }
-      conf.disabled = sel.length !== 2;
-    };
-    box.appendChild(bt);
+  const ta = $('ta');
+  if (has('soplo')) {
+    const pos = (m.juicio.pos || []);
+    if (pos.length) {
+      const s = document.createElement('p');
+      s.className = 'small dim soplo';
+      s.textContent = `👅 La Lengua te sopla una palabra: "${azar(pos)}…". Hacé lo que quieras con eso.`;
+      b.appendChild(s);
+    }
+  }
+
+  const contar = () => {
+    const n = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+    $('cuenta').textContent = n ? `${n} ${n === 1 ? 'palabra' : 'palabras'}` : '';
+    if (has('porque') && n) {
+      const a = analizar(ta.value, q);
+      $('cuenta').textContent += a.eco > .5 ? ' · 🧒 "eso ya lo dijo él"' : n <= 2 ? ' · 🧒 "¿por qué?"' : '';
+    }
+  };
+  ta.addEventListener('input', contar);
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); }
   });
-  b.appendChild(box);
-  const conf = document.createElement('button');
-  conf.className = 'cta';
-  conf.style.marginTop = '20px';
-  conf.textContent = 'CONFIRMAR LAS DOS';
-  conf.disabled = true;
-  conf.onclick = () => {
-    box.querySelectorAll('button').forEach(x => x.disabled = true);
-    conf.disabled = true;
-    const ok = q.pairs.some(p => p.every(k => sel.includes(k)));
-    prevChoice = sel.map(i => q.options[+i].t).join(' + ');
-    aplicar(ok ? 1 : -1, ok ? q.rGood : q.rBad);
+  setTimeout(() => ta.focus(), 60);
+
+  const enviar = () => {
+    ta.disabled = true; $('env').disabled = true;
+    if (cur.final) return final(ta.value);
+    const v = juzgar(ta.value, cur, q);
+    aplicar(v.s, v.replica, ta.value);
   };
-  b.appendChild(conf);
+  $('env').onclick = enviar;
 }
 
-/* — resolución de una pregunta — */
-function aplicar(s, r) {
+function aplicar(s, replica, escrito) {
   pts += s;
   const b = $('e-body');
+
   const d = document.createElement('div');
   d.className = 'reply ' + (s > 0 ? 'p' : s < 0 ? 'n' : '');
-  d.innerHTML = (r ? `<p style="margin:0">${r}</p>` : `<p class="dim" style="margin:0">(no dice nada)</p>`)
-    + (has('feedback') ? `<p class="small dim" style="margin:8px 0 0">🐦‍⬛ El Cuervo: ${s > 0 ? 'sumaste' : s < 0 ? 'restaste' : 'ni ahí'} (${s > 0 ? '+' : ''}${s})</p>` : '');
+  d.innerHTML = `<p class="quien">${cur.nombre}</p><p class="dice">${replica}</p>`
+    + (has('feedback') ? `<p class="small dim" style="margin:10px 0 0">🐦‍⬛ El Cuervo: ${s > 0 ? 'sumaste' : s < 0 ? 'restaste' : 'ni ahí'} (${s > 0 ? '+' : ''}${s})</p>` : '');
   b.appendChild(d);
 
+  // el maestro reacciona con la cara, no solo con el texto
+  const fig = $('e-escena').querySelector('.fig');
+  if (fig) {
+    fig.classList.remove('v-bien', 'v-mal');
+    void fig.offsetWidth;
+    fig.classList.add(s > 0 ? 'v-bien' : s < 0 ? 'v-mal' : 'v-medio');
+  }
+
   const nav = document.createElement('div');
-  nav.style.marginTop = '20px';
+  nav.className = 'nav';
   const sig = document.createElement('button');
   sig.className = 'cta';
-  sig.textContent = qi + 1 < cur.questions.length ? 'SIGUIENTE' : 'VER VEREDICTO';
-  sig.onclick = () => { qi++; qi < cur.questions.length ? pregunta() : veredicto(); };
+  sig.textContent = qi + 1 < ronda.length ? 'SIGUIENTE' : 'VER VEREDICTO';
+  sig.onclick = () => { qi++; qi < ronda.length ? pregunta() : veredicto(); };
   nav.appendChild(sig);
 
-  if (has('retry') && !usedRetry && cur.mode !== 'final') {
+  if (has('retry') && !usedRetry) {
     const rt = document.createElement('button');
     rt.className = 'ghost';
-    rt.style.margin = '10px auto 0';
-    rt.style.display = 'block';
-    rt.textContent = '🐕 el perro te deja repetir esta pregunta';
+    rt.textContent = '🐕 el perro te deja escribirla de nuevo';
     rt.onclick = () => { usedRetry = true; pts -= s; pregunta(); };
     nav.appendChild(rt);
   }
   b.appendChild(nav);
   nav.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
-
-/* reloj por frames: si el jugador cambia de pestaña se pausa solo */
-function correrReloj(box, seg, fin) {
-  const bar = box.querySelector('i');
-  let t0 = null;
-  const paso = ts => {
-    if (t0 === null) t0 = ts;
-    const p = Math.min(1, (ts - t0) / (seg * 1000));
-    bar.style.width = (100 - p * 100).toFixed(2) + '%';
-    box.classList.toggle('low', p > .72);
-    if (p < 1) tmr = requestAnimationFrame(paso);
-    else { tmr = null; fin(); }
-  };
-  tmr = requestAnimationFrame(paso);
-}
-
-function clearTimer() { if (tmr) { cancelAnimationFrame(tmr); tmr = null; } }
 
 /* ═══════════ VEREDICTO ═══════════ */
 
@@ -287,42 +247,33 @@ function veredicto() {
   const box = $('v-box');
   box.className = 'verdict ' + (ok ? 'ok' : 'no');
   $('v-stamp').textContent = ok ? 'aprobado' : 'reprobado';
-  $('v-score').textContent = `${pts} / ${cur.questions.length} · necesitabas ${cur.pass}`;
+  $('v-score').textContent = `${pts > 0 ? '+' : ''}${pts} · necesitabas ${cur.pass > 0 ? '+' + cur.pass : cur.pass}`;
   $('v-text').textContent = ok ? cur.pasa : cur.falla;
   $('v-extra').innerHTML = '';
 
   if (ok) {
     if (!hecho(cur.id)) S.done.push(cur.id);
     save();
-    const esUltimoTierra = cur.id === 'texas';
-    $('btn-next').textContent = esUltimoTierra ? 'IR A LA PLATAFORMA' : 'SEGUIR';
-    $('btn-next').onclick = esUltimoTierra ? lanzamiento : renderMap;
+    const ultimoTierra = cur.id === 'hank';
+    $('btn-next').textContent = ultimoTierra ? 'IR A LA PLATAFORMA' : 'SEGUIR';
+    $('btn-next').onclick = ultimoTierra ? lanzamiento : renderMap;
   } else {
     S.deaths++;
     const fig = darFigura();
     const quitar = id => { const i = S.done.indexOf(id); if (i > -1) S.done.splice(i, 1); };
     quitar(cur.id);
-    // El Faro te sostiene el progreso. Sin él, la caída es literal: volvés a la Tierra
-    // y tenés que convencer a Hank de nuevo para despegar.
     if (!has('ancla')) {
-      if (cur.zone === 'espacio') quitar('texas');
+      if (cur.zona === 'espacio') quitar('hank');
       else { const prev = S.done[S.done.length - 1]; if (prev) quitar(prev); }
     }
     save();
-    const caida = cur.zone === 'espacio' && !has('ancla')
+    const caida = cur.zona === 'espacio' && !has('ancla')
       ? 'Caés. Atravesás todo lo que subiste y aterrizás en Texas, en el mismo galpón. Hank te mira sin sorpresa.'
       : 'Volvés a caer en la Tierra. No caés solo.';
-    if (fig) {
-      $('v-extra').innerHTML = `
-        <p class="dim small">${caida}</p>
-        <div class="figura">
-          <div class="ico">${fig.icon}</div>
-          <div class="nm">${fig.name}</div>
-          <div class="ds">${fig.desc}</div>
-        </div>`;
-    } else {
-      $('v-extra').innerHTML = `<p class="dim small">Volvés a caer en la Tierra. Ya no quedan figuras para darte.</p>`;
-    }
+    $('v-extra').innerHTML = fig
+      ? `<p class="dim small">${caida}</p>
+         <div class="figura"><div class="ico">${fig.icon}</div><div class="nm">${fig.name}</div><div class="ds">${fig.desc}</div></div>`
+      : `<p class="dim small">${caida} Ya no quedan figuras para darte.</p>`;
     $('btn-next').textContent = 'LEVANTARSE';
     $('btn-next').onclick = renderMap;
   }
@@ -332,7 +283,7 @@ function veredicto() {
 function darFigura() {
   const libres = FIGURAS.filter(f => !S.figuras.includes(f.id));
   if (!libres.length) return null;
-  const f = libres[Math.floor(Math.random() * libres.length)];
+  const f = azar(libres);
   S.figuras.push(f.id);
   return f;
 }
@@ -350,10 +301,9 @@ function lanzamiento() {
       n--; setTimeout(tick, 700);
     } else {
       inner.innerHTML = `<div class="count go">DESPEGUE</div>`;
-      txt.textContent = 'EL FORMATO CAMBIA A PARTIR DE ACÁ';
+      txt.textContent = 'DE ACÁ EN ADELANTE LOS MAESTROS NO TIENEN CARA';
       setTimeout(() => {
         inner.innerHTML = `<div class="rocket">🚀</div>`;
-        txt.textContent = 'ARRIBA NO HAY SENSEIS CON NOMBRE';
         document.body.classList.add('espacio');
         setTimeout(() => { L.classList.remove('on'); renderMap(); }, 2600);
       }, 1100);
@@ -364,13 +314,27 @@ function lanzamiento() {
 
 /* ═══════════ FINAL ═══════════ */
 
-function final(key) {
-  const f = cur.finales[key];
+const FINALES = {
+  si: { t: 'Dijiste que sí.', d: 'Y ahora te toca a vos aprobar a otros. Ese es el castigo. Ningún maestro eligió serlo: todos llegaron hasta esta silla, dijeron que sí, y se quedaron de guardia.' },
+  no: { t: 'Dijiste que no.', d: 'Buena señal. El único que sale del borde es el que todavía tiene una pregunta. Los que se aprueban se quedan sentados para siempre, corrigiendo a los que llegan.' },
+  nada: { t: 'No escribiste nada.', d: 'Ocho maestros, cuatro mundos, y en el único examen que importaba dejaste el renglón vacío. Hakuin te aplaudiría. Sócrates te perseguiría por la calle hasta que contestes.' },
+  otro: { t: 'Contestaste otra cosa.', d: 'No dijiste ni sí ni no: dijiste lo tuyo. La silla sigue vacía y vos seguís parado al lado. Es la única manera conocida de irse del borde sin quedarse de guardia.' }
+};
+
+function final(texto) {
+  const t = (texto || '').toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  let k = 'otro';
+  if (!t) k = 'nada';
+  else if (/^(si|sip|claro|obvio|obviamente|aprobe|por supuesto|totalmente|dale)\b/.test(t)) k = 'si';
+  else if (/^(no|nop|nunca|todavia no|para nada|jamas|ni ahi)\b/.test(t)) k = 'no';
+  const f = FINALES[k];
+
   if (!hecho(cur.id)) S.done.push(cur.id);
   save();
   $('end-t').textContent = f.t;
   $('end-d').textContent = f.d;
-  $('end-stats').textContent = `${S.done.length} regiones aprobadas · ${S.deaths} ${S.deaths === 1 ? 'caída' : 'caídas'} · ${S.figuras.length} figuras: ${S.figuras.map(id => FIGURAS.find(x => x.id === id).icon).join(' ') || '—'}`;
+  $('end-eco').textContent = t ? `“${(texto || '').trim()}”` : '';
+  $('end-stats').textContent = `${S.done.length} regiones · ${S.deaths} ${S.deaths === 1 ? 'caída' : 'caídas'} · ${S.figuras.length ? S.figuras.map(id => FIGURAS.find(x => x.id === id).icon).join(' ') : 'sin figuras'}`;
   show('s-end');
 }
 
@@ -417,16 +381,16 @@ function renderFigs() {
 
 /* ═══════════ ARRANQUE ═══════════ */
 
-function reset(vuelveAlTitulo) {
-  S = { done: [], figuras: [], deaths: 0, seen: false };
+function reset(alTitulo) {
+  S = { done: [], figuras: [], deaths: 0, vistas: {}, seen: false };
   save();
   document.body.classList.remove('espacio');
-  vuelveAlTitulo ? show('s-title') : renderMap();
+  alTitulo ? show('s-title') : renderMap();
 }
 
 $('btn-start').onclick = () => { S.seen = true; save(); renderMap(); };
 $('btn-reset-title').onclick = () => reset(true);
-$('btn-reset').onclick = () => { if (confirm('¿Borrar todo? Perdés regiones y figuras.')) reset(false); };
+$('btn-reset').onclick = () => { if (confirm('¿Borrar todo? Perdés regiones, figuras y el registro de preguntas ya vistas.')) reset(false); };
 $('btn-figs').onclick = renderFigs;
 $('btn-back').onclick = renderMap;
 $('btn-again').onclick = () => reset(true);
