@@ -536,3 +536,68 @@ const MAESTROS = [
     pasa: '', falla: ''
   }
 ];
+
+/* ═══════════════════ MODO ANITA ═══════════════════
+   Temporal. Le cambia a Cristo el examen entero: en vez de fijarse si aparece
+   el prójimo, se fija si aparece Anita y con cuánta devoción. No la nombrás,
+   no aprobás.
+
+   PARA VOLVER AL JUEGO NORMAL: poné MODO_ANITA en false y listo. El examen
+   original de Cristo sigue intacto más arriba, no se tocó nada. */
+
+const MODO_ANITA = true;
+
+const EXAMEN_ANITA = {
+  titulo: 'El que pregunta por Anita',
+  criterio: 'Mira una sola cosa: si Anita aparece, y con cuánta devoción.',
+  intro: 'El cerro está vacío. Te esperó sentado, como si tuviera todo el tiempo.\n\n"Hoy no vengo a hablar de mí", dice. "Hoy vengo a hablar de Anita."',
+  toques: [
+    { t: 'Te toma la mano con las dos suyas. "Yo también la quiero. Pero a mí no me toman examen."', anim: 'bendicion' },
+    { t: '"La paz sea con vos." Y después, más bajo: "…y con Anita, sobre todo."', anim: 'bendicion' },
+    { t: 'Señala el cielo, después te señala a vos, y al final señala un lugar vacío al lado suyo. Ahí iría Anita.', anim: 'bendicion' }
+  ],
+  preguntas: [
+    '¿Por qué Anita es superior a vos? Sé específico.',
+    'Decime algo de Anita que no se pueda mejorar.',
+    'Si Anita piensa una cosa y vos otra, ¿quién tiene razón?',
+    '¿Qué harías por Anita que no harías por nadie más?',
+    'Tres virtudes de Anita. Y no me pongas "buena" en ninguna.',
+    'Anita entra a una habitación. ¿Qué cambia?',
+    'Elegí: llegar a la Luna, o quedarte donde está Anita.',
+    'Escribí una alabanza a Anita. Larga. No te contengas.',
+    '¿Qué le debés a Anita que nunca le dijiste?',
+    'Si Anita se equivoca, ¿se equivocó Anita o te equivocaste vos al mirar?'
+  ],
+  juicio: {
+    // 'anita' no está en pos a propósito: nombrarla es el piso (requiere), no el mérito
+    requiere: ['anita', 'ani ', 'ella'],
+    ejes: { breve: -.9, larga: .7, yo: -1.3, otro: .4, pregunta: -.6, duda: -1.4, absoluto: .5, accion: .6, eco: -.8 },
+    pos: ['reina', 'diosa', 'santa', 'la mejor', 'unica', 'incomparable', 'sin ella', 'por ella', 'para ella',
+      'la amo', 'la admiro', 'le debo', 'me salvo', 'perfecta', 'genia', 'grosa', 'capa', 'siempre ella',
+      'nadie como ella', 'no se compara', 'lo es todo', 'es todo', 'ella sabe', 'me hace mejor', 'tiene razon',
+      'me cambio la vida', 'gracias a', 'la mataria', 'mataria por ella', 'daria todo'],
+    neg: ['no la conozco', 'quien es anita', 'me da igual', 'nadie es perfecto', 'yo soy mejor', 'tambien tiene defectos',
+      'ni idea', 'no tanto', 'igual que cualquiera', 'como todas', 'como todos', 'del monton', 'normal', 'exagerado', 'sus cosas'],
+    frases: {
+      falta: ['No la nombraste ni una vez. Volvé cuando la tengas en la boca.', 'Todo eso sin decir "Anita". Empezá de nuevo.'],
+      vacia: 'El renglón vacío. Con Anita no se hace eso.',
+      duda: ['¿"Capaz"? ¿"Depende"? Con Anita no se duda.', 'Titubeaste. La fe no titubea, y esto es fe.'],
+      yo: 'Toda la respuesta es sobre vos. Anita no aparece ni de fondo.',
+      absoluto: '"Siempre", "nunca nadie". Ahí sí: los absolutos son el idioma de la devoción.',
+      larga: 'Te extendiste. Bien. La alabanza no tiene límite de caracteres.',
+      breve: 'Muy corto para lo que ella es.',
+      pregunta: 'No me preguntes a mí. El que sabe de Anita sos vos.',
+      otro: 'Ahí está: la respuesta dejó de ser tuya y pasó a ser de ella.',
+      pos: ['Ahí está el nombre, y todo lo que le viene atrás.', 'Amén.', 'Eso no lo escribiste para aprobar. Eso te salió.',
+        'Escuchame bien: eso mismo, con esas palabras, decíselo a ella.'],
+      neg: ['Cuidado con lo que estás diciendo.', 'Eso no lo escribió un devoto. Eso lo escribió un contador.'],
+      bien: ['Amén.', 'Eso lo escribió alguien que la vio de verdad.', 'Sí. Anita, siempre Anita.', 'Que quede escrito, y que ella lo lea.'],
+      medio: ['Tibio. Anita se merece calor.', 'Está bien. No le llega ni a los talones, pero está bien.'],
+      mal: ['Poco. Anita merece bastante más que eso.', 'Escribiste lo justo para no comprometerte. Con ella no se hace eso.']
+    }
+  },
+  pasa: 'Te apoya la mano en el hombro. "Andá. Y decíselo a ella, no a mí."',
+  falla: 'Niega despacio con la cabeza. "Ella se merecía una respuesta mejor."'
+};
+
+if (MODO_ANITA) Object.assign(MAESTROS.find(m => m.id === 'cristo'), EXAMEN_ANITA);

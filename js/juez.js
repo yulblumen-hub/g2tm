@@ -60,8 +60,14 @@ function juzgar(texto, m, pregunta) {
   const j = m.juicio || {};
   const t = a.texto;
 
+  const elegir = x => Array.isArray(x) ? x[Math.floor(Math.random() * x.length)] : x;
+
   // sin respuesta no hay examen
-  if (a.vacia) return { s: -1, replica: (j.frases && j.frases.vacia) || 'Eso no es una respuesta. Es una manera de irte.' };
+  if (a.vacia) return { s: -1, replica: elegir(j.frases && j.frases.vacia) || 'Eso no es una respuesta. Es una manera de irte.' };
+
+  // algunos maestros exigen que aparezca algo sí o sí
+  if (j.requiere && !j.requiere.some(w => t.includes(w)))
+    return { s: -1, replica: elegir(j.frases && j.frases.falta) || 'Te faltó lo único que te pedí.' };
 
   let p = 0;
   let motivo = null;
@@ -86,9 +92,11 @@ function juzgar(texto, m, pregunta) {
 
   const s = p >= 1 ? 1 : p <= -1 ? -1 : 0;
   const f = j.frases || {};
-  const banco = f[motivo && motivo[0]] || null;
+  // la frase puntual solo si tira para el mismo lado que el veredicto:
+  // si no, el maestro te felicitaría por algo y encima te reprobaría
+  const coincide = motivo && ((s > 0 && motivo[1] > 0) || (s < 0 && motivo[1] < 0));
+  const banco = coincide ? f[motivo[0]] : null;
   const generica = s > 0 ? f.bien : s < 0 ? f.mal : f.medio;
-  const elegir = x => Array.isArray(x) ? x[Math.floor(Math.random() * x.length)] : x;
 
   return { s, replica: elegir(banco) || elegir(generica) || '…' };
 }
