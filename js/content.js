@@ -537,15 +537,328 @@ const MAESTROS = [
   }
 ];
 
-/* ═══════════════════ MODO ANITA ═══════════════════
+/* ═══════════════════ QUIÉN FUE CADA UNO ═══════════════════
+   Se abre desde el botón "¿quién es?" arriba de la escena. Para los que
+   existieron de verdad, los datos son reales. */
+
+const FICHAS = {
+  buda: {
+    quien: 'Siddhārtha Gautama', cuando: 'siglo V a.C.', donde: 'entre el norte de India y Nepal',
+    datos: [
+      'Nació príncipe. A los 29 se fue de la casa cuando entendió que la vejez, la enfermedad y la muerte lo esperaban a él también.',
+      'Probó seis años de ayuno extremo y casi se muere. De ahí sacó su idea central: ni el lujo ni el castigo, el camino del medio.',
+      'No escribió una sola línea. Todo lo que se le atribuye lo memorizaron sus discípulos y se puso por escrito unos 400 años después.',
+      'Su diagnóstico en cuatro pasos: hay sufrimiento, tiene una causa (el aferrarse), se puede terminar, y hay una manera de hacerlo.'
+    ],
+    frase: 'No creas nada solo porque te lo dijo un maestro. Probalo vos.'
+  },
+  socrates: {
+    quien: 'Sócrates', cuando: '470–399 a.C.', donde: 'Atenas',
+    datos: [
+      'Tampoco escribió nada. Lo conocemos por Platón y Jenofonte, que no coinciden entre sí.',
+      'Su método era preguntar hasta que el otro se contradijera solo. Lo llamaban "el tábano": la mosca que pica al caballo para que no se duerma.',
+      'Fue albañil y soldado antes que filósofo. Peleó en tres campañas.',
+      'A los 70 lo juzgaron por no creer en los dioses de la ciudad y corromper a los jóvenes. Podía escaparse: se quedó y tomó la cicuta.'
+    ],
+    frase: 'Solo sé que no sé nada.'
+  },
+  laotse: {
+    quien: 'Lao Tsé — "el viejo maestro"', cuando: 'siglo VI a.C. (si existió)', donde: 'China',
+    datos: [
+      'Puede que no haya existido: muchos historiadores creen que el nombre agrupa a varios autores.',
+      'La leyenda dice que se iba del reino, harto, y un guardia de frontera no lo dejó pasar hasta que dejara su enseñanza por escrito. Escribió el Tao Te Ching y se fue.',
+      'Son 81 capítulos cortos. Es de los libros más traducidos del mundo, y casi ninguna traducción se parece a otra.',
+      'Su idea más difícil es wu wei: actuar sin forzar. No es no hacer nada; es no empujar el río.'
+    ],
+    frase: 'El agua blanda vence a la piedra dura.'
+  },
+  cristo: {
+    quien: 'Jesús de Nazaret', cuando: '~4 a.C. – 30 d.C.', donde: 'Galilea y Judea, bajo ocupación romana',
+    datos: [
+      'Carpintero. Empezó a predicar cerca de los 30 y lo hizo tres años.',
+      'Como Buda y Sócrates, no dejó nada escrito. Los evangelios son de décadas después.',
+      'Su vuelta de tuerca fue el enemigo: no alcanzaba con querer al que te quiere.',
+      'Lo ejecutaron con el método que Roma usaba para los sediciosos. Historiadores no cristianos de la época, como Tácito y Josefo, registran la ejecución.'
+    ],
+    frase: 'El que esté libre de culpa, que tire la primera piedra.'
+  },
+  anita: {
+    quien: 'Anita', cuando: 'ahora mismo', donde: 'el patio, como a las siete de la tarde',
+    datos: [
+      'Es la única maestra viva del juego, y la única que no tiene templo, ni desierto, ni sala de control: tiene un patio con plantas y ropa colgada.',
+      'Aparece justo después de Cristo, que se pasó tres preguntas hablando de ella.',
+      'Cuidado con lo que aprendiste allá abajo: a ella la alabanza le da vergüenza ajena.',
+      'Es la más difícil de todos y la única que te pregunta si estás bien.'
+    ],
+    frase: '¿Y vos qué querés, en serio?'
+  },
+  anubis: {
+    quien: 'Anpu, que los griegos llamaron Anubis', cuando: 'desde el 3000 a.C.', donde: 'Egipto',
+    datos: [
+      'Cabeza de chacal porque los chacales rondaban los cementerios del desierto: el animal que cuida a los muertos.',
+      'Su trabajo en el juicio era técnico: acomodar la balanza y verificar la medición. No decidía él.',
+      'De un lado el corazón del muerto; del otro, la pluma de Maat, que es el orden y la verdad exacta.',
+      'Si el corazón pesaba más por las malas acciones, se lo comía Ammyt y no había segunda vida. Nadie era juzgado por la intención, solo por el peso.'
+    ],
+    frase: 'Todo se anota. También esto.'
+  },
+  hakuin: {
+    quien: 'Hakuin Ekaku', cuando: '1686–1769', donde: 'Japón',
+    datos: [
+      'Prácticamente él solo revivió el zen Rinzai, que estaba dormido hacía siglos.',
+      'El koan de "el sonido de una sola mano" lo inventó él para principiantes.',
+      'Lo acusaron falsamente de ser el padre del hijo de una vecina. Contestó "¿ah, sí?" y crió al chico dos años. Cuando la madre confesó la mentira, se lo devolvieron y volvió a decir "¿ah, sí?".',
+      'Pintaba y escribía para campesinos, no para nobles: le importaba que el zen no quedara encerrado en los monasterios.'
+    ],
+    frase: 'Escuchá el sonido de una sola mano.'
+  },
+  lucifer: {
+    quien: 'Lucifer — "el que trae la luz"', cuando: 'depende de a quién le preguntes', donde: 'el pozo',
+    datos: [
+      'El nombre es latín: lucem ferre, portador de luz. Era como los romanos llamaban al lucero del alba, el planeta Venus.',
+      'Aparece en Isaías 14, en un pasaje que en realidad se burlaba de un rey de Babilonia por creerse un dios. Recién siglos después se leyó como el nombre del diablo.',
+      'La idea del ángel más brillante que cae por no querer obedecer es muy posterior: se la debemos más a Dante y a Milton que a la Biblia.',
+      'En el juego es el único que te pregunta qué querés en vez de qué deberías querer. Por eso es peligroso.'
+    ],
+    frase: 'Mejor reinar en el infierno que servir en el cielo. (Milton se lo puso en la boca en 1667.)'
+  },
+  hank: {
+    quien: 'Hank Rayburn (inventado)', cuando: 'los años sesenta', donde: 'Houston, Texas',
+    datos: [
+      'No existió. Es un compuesto de los controladores de vuelo de la NASA de esa época.',
+      'La edad promedio en la sala de control durante el Apolo 11 era de 26 años.',
+      'Su regla es la de ellos: "duda si tenés dudas". Un controlador tenía la obligación de abortar si algo no cerraba, sin importar el costo.',
+      'Es el último examen de la Tierra porque arriba no sirve tener razón: sirve volver.'
+    ],
+    frase: 'El cohete espera. El muerto no.'
+  },
+  silencio: {
+    quien: 'Nadie', cuando: '—', donde: 'Mare Tranquillitatis, la Luna',
+    datos: [
+      'No hay aire, así que no hay sonido. Lo único que se escucha adentro del casco sos vos.',
+      'Las huellas que dejaron los astronautas siguen ahí: sin viento ni agua, pueden durar millones de años.',
+      'Desde la Luna la Tierra no sale ni se pone: se queda quieta en el mismo punto del cielo.',
+      'Es el único maestro del juego que aprueba el silencio literal.'
+    ],
+    frase: '…'
+  },
+  automata: {
+    quien: 'AUTÓMATA-7 (inventado)', cuando: 'lleva mucho apagado', donde: 'Valles Marineris, Marte',
+    datos: [
+      'Valles Marineris existe y es real: un tajo de 4000 km, diez veces el Gran Cañón.',
+      'La paradoja que te tira ("esta frase es falsa") es la del mentiroso, y tiene 2500 años sin solución limpia.',
+      'La otra es el barco de Teseo: si le cambiás todas las tablas, ¿sigue siendo el mismo barco? Con neuronas, la pregunta pica más.',
+      'Acepta que digas "no sé". Es lo único que no puede refutarte.'
+    ],
+    frase: 'NO EXISTE RESPUESTA CORRECTA. EXISTE RESPUESTA COHERENTE.'
+  },
+  tormenta: {
+    quien: 'La Gran Mancha Roja', cuando: 'la vemos desde 1665', donde: 'Júpiter',
+    datos: [
+      'Es una tormenta que gira hace por lo menos 350 años, y puede que mucho más.',
+      'Entraba la Tierra entera adentro dos veces. Se está achicando: hoy entra una sola vez.',
+      'Júpiter no tiene superficie. Si te dejaran caer, no llegarías nunca a un piso: se pondría cada vez más denso hasta aplastarte.',
+      'Por eso su examen: te pide dos cosas ciertas que no se lleven bien. Es lo único que sabe hacer.'
+    ],
+    frase: 'Traeme algo partido al medio.'
+  },
+  anillo: {
+    quien: 'Los anillos', cuando: 'quizás más nuevos que los dinosaurios', donde: 'Saturno',
+    datos: [
+      'No son sólidos: son miles de millones de pedazos de hielo, del tamaño de un grano de arena a una casa.',
+      'Tienen 280.000 km de ancho y a veces menos de 10 metros de espesor. Si fueran una hoja de papel, serían más finos que eso.',
+      'Se están cayendo sobre el planeta: en unos 100 millones de años puede que no queden.',
+      'Cada pedazo da vueltas alrededor de lo mismo, para siempre, sin llegar a ningún lado. De ahí sus preguntas.'
+    ],
+    frase: 'Lo que contestes te lo voy a devolver.'
+  },
+  vos: {
+    quien: 'Vos', cuando: 'ahora', donde: 'el borde',
+    datos: [
+      'La silla vacía es el examen entero.',
+      'Ningún maestro del juego eligió serlo: todos llegaron hasta acá, se aprobaron solos y se quedaron de guardia.',
+      'No hay puntaje. Lo que escribas cambia el final, no la nota.',
+      'Se puede salir sin sentarse. Es la única manera conocida.'
+    ],
+    frase: '¿Aprobaste?'
+  }
+};
+
+/* ═══════════════════ MÁS PREGUNTAS ═══════════════════
+   Se suman al banco de cada uno. Cuantas más haya, más tarda en repetirse
+   una: el juego sortea 3 por ronda entre las que nunca te salieron. */
+
+const MAS_PREGUNTAS = {
+  buda: [
+    '¿Qué estás esperando que pase para recién ahí estar tranquilo?',
+    'Perdiste algo importante y ya no duele. ¿Qué te dice eso?',
+    '¿Qué querías a los quince que hoy te da gracia?',
+    'Si tuvieras que soltar una sola cosa hoy, ¿cuál sería la más fácil? ¿Y la más difícil?',
+    '¿Qué te hace falta de verdad para el resto del día?',
+    'Alguien te elogia por algo que no hiciste. ¿Qué se te mueve?'
+  ],
+  socrates: [
+    '¿Qué opinión tuya cambiaría si te trajera una sola prueba en contra?',
+    'Decime una palabra que usás todos los días y no sabrías definir.',
+    '¿Puede ser justa una ley injusta?',
+    '¿Alguien puede ser feliz sabiendo que se miente?',
+    'Si nadie se entera de que hiciste trampa, ¿hiciste trampa?',
+    '¿Qué te enseñaron en la escuela que después te diste cuenta de que era falso?'
+  ],
+  laotse: [
+    '¿Qué problema tuyo se arregló solo mientras vos peleabas con otro?',
+    'Decime algo que dejaste de intentar y estuvo bien dejarlo.',
+    '¿Cuánto de lo que hiciste hoy hacía falta?',
+    'El que va último en la fila, ¿perdió algo?',
+    '¿Qué estás llenando que funcionaría mejor vacío?',
+    'Un árbol torcido no sirve para hacer tablas. ¿Para qué sirve?'
+  ],
+  cristo: [
+    '¿Qué le debés a alguien que ya no podés pagarle?',
+    'Si tuvieras que elegir entre tener razón o no perder a alguien, ¿qué elegís?',
+    '¿A quién juzgaste rápido y después entendiste?',
+    '¿Qué harías si supieras que nadie te lo va a agradecer nunca?',
+    'Contame de alguien que te haya perdonado a vos.',
+    '¿Quién te necesita y no lo sabés?'
+  ],
+  anubis: [
+    'Ponele número: del 1 al 10, ¿cuánto de lo que decís de vos es cierto?',
+    '¿Qué prometiste y no cumpliste?',
+    'Contame algo que hiciste y que preferirías que no figure en ningún lado.',
+    '¿Cuánto tardaste en pedir perdón la última vez? Sé preciso.',
+    '¿De qué te acusarían con razón los que te conocen bien?',
+    'Si tu vida fuera un inventario, ¿qué falta y quién se lo llevó?'
+  ],
+  hakuin: [
+    '¿Qué escuchás ahora mismo, además de esto?',
+    'Decime una cosa que sea verdad sin usar ninguna idea.',
+    '¿Cuánto pesa tu nombre?',
+    'Antes de leer esta línea, ¿dónde estaba tu atención?',
+    'Si tirás esta pregunta a la basura, ¿qué queda?',
+    'Mostrame algo que no se pueda explicar.'
+  ],
+  lucifer: [
+    '¿Qué le envidiás a alguien que querés?',
+    'Si te aseguro que no hay castigo, ¿qué es lo primero que hacés?',
+    '¿Quién te tiene miedo y te gusta que te lo tenga?',
+    '¿Qué parte de lo que sos elegiste vos y cuál te la pusieron?',
+    'Decime algo que te salió bien y que nadie te reconoció.',
+    '¿Qué harías si fueras el doble de valiente?'
+  ],
+  hank: [
+    'Tenés diez minutos de oxígeno y veinte de camino. ¿Qué hacés?',
+    'Tu compañero se equivocó y nadie se dio cuenta. ¿Lo decís?',
+    '¿Qué te da miedo de todo esto? Y no me digas "nada".',
+    'Explicame algo técnico que sepas hacer, en una frase, como si tuviera doce años.',
+    'Si te sacan del vuelo mañana, ¿qué hacés pasado mañana?',
+    'Un procedimiento que sabés de memoria te falla. ¿Qué revisás primero?'
+  ],
+  silencio: [
+    '¿Cuánto hace que no estás callado?',
+    'Sacate el casco. ¿Qué te pasó por la cabeza recién?',
+    '¿Qué frase tuya de allá abajo suena distinta acá?',
+    'Nombrá una sola cosa que valga el viaje.'
+  ],
+  automata: [
+    '¿Qué prueba tiene de que ayer usted era la misma persona?',
+    'Si borro este intercambio, ¿ocurrió?',
+    'Defina "libertad" sin usar la palabra "elegir".',
+    'Nombre un error suyo que todavía esté cometiendo.'
+  ],
+  tormenta: [
+    '¿Qué te da vergüenza y también te da orgullo?',
+    'Nombrá una decisión que fue la correcta y te arruinó algo.',
+    '¿A quién querés y no soportás?',
+    '¿Qué te repetís que sabés que es mentira y te sirve igual?'
+  ],
+  anillo: [
+    '¿Qué error tuyo ya cometiste antes, igual, con otra ropa?',
+    'La respuesta que estás por escribir, ¿ya la escribiste en otro lado?',
+    '¿Qué consejo das y no seguís?',
+    '¿Cuántas veces empezaste esto mismo?'
+  ]
+};
+
+MAESTROS.forEach(m => {
+  if (FICHAS[m.id]) m.ficha = FICHAS[m.id];
+  if (MAS_PREGUNTAS[m.id]) m.preguntas = m.preguntas.concat(MAS_PREGUNTAS[m.id]);
+});
+
+/* ═══════════════════ ANITA ═══════════════════
+   APAGADO. Una sola bandera controla las dos cosas: que Anita aparezca como
+   maestra después de Cristo, y que Cristo tome examen sobre ella.
+   Para encenderlo, poné ANITA en true. El código de abajo queda intacto. */
+
+const ANITA = false;
+
+/* La maestra. El chiste era el contraste: Cristo te exige idolatrarla y ella
+   te baja de un hondazo si le chupás las medias. */
+
+const MAESTRA_ANITA = {
+  id: 'anita', zona: 'tierra', region: 'El patio', nombre: 'Anita', titulo: 'La que pregunta en serio',
+  pass: 1, preguntasPorRonda: 3,
+  criterio: 'Odia el chamuyo. Quiere algo concreto y tuyo, aunque quede feo.',
+  intro: 'No hay templo, ni desierto, ni sala de control. Hay un patio, plantas, ropa colgada y alguien que te corre una silla para que te sientes.\n\n"Recién venís de hablar con Jesús, ya sé. Olvidate de todo eso. Contame vos."',
+  toques: [
+    { t: 'Te frena la mano en el aire, sin soltarla. "Pará. ¿Estás bien?"', anim: 'bendicion' },
+    { t: 'Se ríe. "¿Qué hacés?" Y se queda mirándote igual, esperando que contestes la pregunta.', anim: 'bendicion' },
+    { t: 'Te acerca el mate. "Tomá. Y después me contás de verdad."', anim: 'bendicion' }
+  ],
+  preguntas: [
+    'Cristo se pasó tres preguntas hablando de mí. ¿Vos qué pensás, en serio?',
+    '¿Qué es lo que más te cuesta decirle a alguien en la cara?',
+    'Contame algo tuyo que no le contarías a nadie de los que ya pasaste.',
+    '¿Cuándo fue la última vez que pediste ayuda?',
+    'Decime algo que hacés bien. Sin achicarte y sin agrandarte.',
+    'Si todo esto te sale mal, ¿qué hacés al día siguiente?',
+    '¿Qué te dijeron que eras y te lo creíste?',
+    '¿A quién le tenés que escribir y lo estás pateando?',
+    '¿Qué te agota?',
+    '¿Qué hacés cuando nadie te pide nada?',
+    'Contame algo que aprendiste este año y que te costó.',
+    '¿Qué parte de tu vida está en piloto automático?',
+    'Te regalan un día entero sin obligaciones. ¿Qué hacés?',
+    '¿Qué te da vergüenza querer?',
+    '¿Qué mentirita te decís para levantarte a la mañana?',
+    '¿Qué necesitás que nadie te está dando?'
+  ],
+  juicio: {
+    ejes: { breve: -.6, larga: .4, yo: .9, otro: -.2, pregunta: -.7, duda: .4, absoluto: -.7, accion: .5, eco: -1 },
+    pos: ['me cuesta', 'me da miedo', 'me da verguenza', 'no puedo', 'no se como', 'llore', 'llorar', 'me equivoqu',
+      'estoy cansado', 'estoy cansada', 'la verdad es que', 'nunca dije', 'nunca le dije', 'ayer', 'el otro dia',
+      'hace meses', 'mi vieja', 'mi viejo', 'me duele', 'necesito', 'me falta', 'me pasa', 'estoy solo', 'estoy sola'],
+    neg: ['sos la mejor', 'sos increible', 'diosa', 'reina', 'perfecta', 'te amo', 'sos hermosa', 'no tengo defectos',
+      'todo bien', 'estoy bien', 'nada que decir', 'no me pasa nada', 'ninguna', 'sos un sol', 'no cambies'],
+    frases: {
+      vacia: '¿Nada? Bueno. Después no digas que no te pregunté.',
+      yo: 'Bien, hablaste de vos. Es lo único que te pedí.',
+      neg: ['Pará, pará. No vine a que me tires flores, vine a que me contestes.', 'Eso es lo que se dice cuando no se quiere decir nada. Otra vez.'],
+      duda: 'No sabés y lo decís. Ya está, eso alcanza.',
+      pregunta: 'No me devuelvas la pregunta. Te la hice a vos.',
+      breve: 'Un poco más. No te voy a juzgar por esto, ya lo hicieron ocho antes que yo.',
+      absoluto: '"Nunca", "siempre". Nadie es tan prolijo.',
+      accion: 'Eso es una cosa que hacés, no una que decís. Sirve.',
+      eco: 'Me repetiste lo que te dije. Dale, en serio.',
+      pos: ['Ahí sí. Eso te costó escribirlo y se nota.', 'Gracias. En serio, gracias.', 'Eso no se lo dijiste a nadie todavía, ¿no?'],
+      bien: ['Listo. Eso era.', 'Bien. Sos bastante más interesante cuando no actuás.', 'Me quedo con eso.'],
+      medio: ['Está bien. Pero te quedaste en la puerta.', 'Ajá. ¿Y lo otro? Lo que no escribiste.'],
+      mal: ['Eso no me lo creo ni yo.', 'Vos podés más que eso. Literalmente: pasaste ocho maestros.']
+    }
+  },
+  ficha: FICHAS.anita,
+  pasa: 'Se levanta a lavar el mate. "Andá tranquilo. Y escribile al que estabas pateando."',
+  falla: 'No se enoja. Te sirve más agua. "Cuando quieras hablamos de verdad."'
+};
+
+if (ANITA) MAESTROS.splice(MAESTROS.findIndex(m => m.id === 'cristo') + 1, 0, MAESTRA_ANITA);
+
+/* ── El examen de Cristo en modo Anita ──
    Temporal. Le cambia a Cristo el examen entero: en vez de fijarse si aparece
    el prójimo, se fija si aparece Anita y con cuánta devoción. No la nombrás,
    no aprobás.
 
-   PARA VOLVER AL JUEGO NORMAL: poné MODO_ANITA en false y listo. El examen
-   original de Cristo sigue intacto más arriba, no se tocó nada. */
-
-const MODO_ANITA = true;
+   Se enciende con la misma bandera ANITA de arriba. El examen original de
+   Cristo sigue intacto más arriba: no se tocó nada. */
 
 const EXAMEN_ANITA = {
   titulo: 'El que pregunta por Anita',
@@ -600,4 +913,4 @@ const EXAMEN_ANITA = {
   falla: 'Niega despacio con la cabeza. "Ella se merecía una respuesta mejor."'
 };
 
-if (MODO_ANITA) Object.assign(MAESTROS.find(m => m.id === 'cristo'), EXAMEN_ANITA);
+if (ANITA) Object.assign(MAESTROS.find(m => m.id === 'cristo'), EXAMEN_ANITA);

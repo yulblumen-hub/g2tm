@@ -1,7 +1,7 @@
 /* G2tM — service worker: que la app abra sin internet.
    Si cambiás cualquier archivo del juego, subí el número de CACHE. */
 
-const CACHE = 'g2tm-v3';
+const CACHE = 'g2tm-v4';
 const ASSETS = [
   './',
   'index.html',

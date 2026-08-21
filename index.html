@@ -38,9 +38,14 @@
       <div class="tagline">Get to the Moon — y bastante más lejos</div>
 
       <div class="rules">
-        <p>Cada región tiene <b>un maestro</b>. Te hace tres preguntas y vos <b>las contestás escribiendo</b>. No hay opciones ni respuestas correctas: cada maestro juzga a su manera, y lo que te salva con Buda te hunde con Lucifer.</p>
-        <p><b>Tocá al maestro.</b> Todos reaccionan, y ninguno reacciona igual.</p>
-        <p>Aprobás las ocho regiones de la Tierra y despega el cohete. Si pifiás, <b>volvés a la Tierra con una figura encima</b>. Las preguntas no se repiten hasta que se agota el banco.</p>
+        <p>Cada región tiene <b>un maestro</b>. Te hace tres preguntas y vos <b>las contestás escribiendo</b>. No hay opciones ni respuestas correctas: cada uno juzga a su manera, y lo que te salva con Buda te hunde con Lucifer.</p>
+        <p><b>Tocá al maestro</b> — todos reaccionan y ninguno igual. Y abrí su ficha: quién fue, cuándo, qué dejó.</p>
+        <p>Aprobás las ocho regiones de la Tierra y despega el cohete. Si pifiás, <b>volvés con una figura encima</b>. Las preguntas salen de un banco grande y no se repiten hasta agotarlo.</p>
+      </div>
+
+      <div class="usuario-box">
+        <input id="usuario" type="text" placeholder="tu nombre (opcional)" autocomplete="off" spellcheck="false" maxlength="24">
+        <p class="dim small" id="quien-sos"></p>
       </div>
 
       <button class="cta" id="btn-start">EMPEZAR</button>
@@ -52,7 +57,19 @@
   <section class="screen" id="s-map">
     <h1 id="map-title">Tierra</h1>
     <p class="dim small" id="map-sub"></p>
-    <div class="map" id="map"></div>
+
+    <div class="mapa-marco">
+      <div class="mapa-zoom" id="mapa-zoom">
+        <div class="lienzo" id="lienzo"></div>
+        <div class="mapa-controles" id="mapa-controles">
+          <button id="zoom-mas" title="acercar">+</button>
+          <button id="zoom-menos" title="alejar">−</button>
+          <button id="zoom-yo" title="dónde estoy">◎</button>
+        </div>
+      </div>
+      <p class="mapa-ayuda dim small">arrastrá para moverte · rueda o dos dedos para el zoom</p>
+    </div>
+
     <footer>
       <button class="ghost" id="btn-figs">mis figuras</button>
       <button class="ghost" id="btn-reset">reiniciar</button>
@@ -75,6 +92,7 @@
   <!-- VEREDICTO -->
   <section class="screen" id="s-verdict">
     <div class="verdict" id="v-box">
+      <div class="v-retrato" id="v-retrato"></div>
       <div class="stamp" id="v-stamp"></div>
       <div class="score" id="v-score"></div>
       <p class="pre" id="v-text"></p>
@@ -102,6 +120,14 @@
     </div>
   </section>
 
+</div>
+
+<!-- FICHA DEL MAESTRO -->
+<div id="ficha-modal">
+  <div class="ficha">
+    <button class="ficha-cerrar" id="ficha-cerrar" aria-label="cerrar">✕</button>
+    <div id="ficha-cuerpo"></div>
+  </div>
 </div>
 
 <!-- SECUENCIA DE LANZAMIENTO -->

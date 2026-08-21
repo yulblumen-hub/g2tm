@@ -92,37 +92,92 @@ button.cta:hover { background: var(--accent); color: var(--bg); }
 button.ghost { border: none; color: var(--dim); font-size: .86rem; padding: 8px 0; width: auto; }
 button.ghost:hover { color: var(--ink); background: none; }
 
-/* ── mapa ── */
-.map { display: flex; flex-direction: column; margin: 26px 0; }
-.node {
-  display: flex; align-items: center; gap: 14px;
-  padding: 10px 14px 10px 10px; border: 1px solid var(--line); border-radius: 2px;
-  position: relative; background: var(--paper);
+/* ── nombre del jugador ── */
+.usuario-box { margin: 0 0 22px; }
+.usuario-box input {
+  width: 100%; max-width: 280px; margin: 0 auto; display: block;
+  font-family: inherit; font-size: .95rem; color: var(--ink); text-align: center;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 2px; padding: 10px 12px;
 }
-.node + .node { margin-top: 22px; }
-.node + .node::before {
-  content: ''; position: absolute; left: 44px; top: -22px; height: 22px;
-  border-left: 1px dashed var(--line);
+.usuario-box input:focus { outline: none; border-color: var(--accent); }
+.usuario-box p { margin: 8px 0 0; }
+
+/* ── mapa navegable ── */
+.mapa-marco { position: relative; margin: 20px 0 8px; }
+.mapa-zoom {
+  position: relative; height: 62vh; min-height: 340px; max-height: 620px;
+  border: 1px solid var(--line); border-radius: 3px; overflow: hidden;
+  touch-action: none; cursor: grab; overscroll-behavior: contain;
+  /* el mismo cielo que el lienzo, para que lo que sobra al alejar no sea un agujero */
+  background: linear-gradient(#01020a 0%, #061024 45%, #16233a 100%);
 }
-.node .mini {
-  width: 68px; height: 56px; flex: 0 0 68px; position: relative;
-  border-radius: 2px; overflow: hidden; background: var(--bg);
+.mapa-zoom:active { cursor: grabbing; }
+.lienzo { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+.mapa-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.pin { position: absolute; transform: translate(-50%, -50%); text-align: center; width: 128px; }
+.pin .disco {
+  width: 84px; height: 84px; margin: 0 auto; position: relative;
+  border-radius: 50%; overflow: hidden; border: 2px solid var(--line); background: #05070e;
+  display: flex; align-items: center; justify-content: center;
 }
-.node .mini svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.node .mini .mf { left: 50%; top: auto; bottom: -6%; width: auto; height: 92%; transform: translateX(-50%); }
-.node.lock .mini { border: 1px dashed var(--line); }
-.node .meta { flex: 1; min-width: 0; }
-.node .rg { font-weight: 600; }
-.node .sn { color: var(--dim); font-size: .84rem; }
-.node .st { font-size: .74rem; letter-spacing: .06em; color: var(--dim); text-transform: uppercase; }
-.node.done { border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
-.node.done .st { color: var(--good); }
-.node.now { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); cursor: pointer; }
-.node.now .st { color: var(--accent); }
-.node.now:hover { background: color-mix(in srgb, var(--accent) 8%, var(--paper)); }
-.node.lock { opacity: .4; }
-.divider { display: flex; align-items: center; gap: 12px; margin: 30px 0 8px; color: var(--dim); font-size: .76rem; letter-spacing: .18em; text-transform: uppercase; }
-.divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--line); }
+.pin .disco svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pin .disco .pf { left: 50%; top: auto; bottom: -8%; width: auto; height: 104%; transform: translateX(-50%); }
+.pin .cerrado { position: relative; font-size: 1.8rem; color: #3b4a63; font-weight: 700; }
+.pin .etiqueta { margin-top: 7px; line-height: 1.25; text-shadow: 0 2px 8px #000, 0 0 3px #000; }
+.pin .etiqueta b { display: block; font-size: .84rem; color: #f2e9d8; }
+.pin .etiqueta span { font-size: .74rem; color: #9fb3c9; }
+.pin.now .disco { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent), 0 0 26px color-mix(in srgb, var(--accent) 45%, transparent); animation: latir 2.6s ease-in-out infinite; }
+.pin.clickable { cursor: pointer; }
+.pin.done .disco { border-color: color-mix(in srgb, var(--good) 60%, transparent); }
+.pin.lock { opacity: .45; }
+.pin.lock .disco { border-style: dashed; }
+.pin .tilde {
+  position: absolute; top: -4px; right: 16px; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--good); color: #06210f; font-size: .84rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+@keyframes latir {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent), 0 0 26px color-mix(in srgb, var(--accent) 45%, transparent); }
+  50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent) 10%, transparent), 0 0 34px color-mix(in srgb, var(--accent) 30%, transparent); }
+}
+
+.mapa-controles { position: absolute; right: 10px; bottom: 10px; z-index: 3; display: flex; flex-direction: column; gap: 6px; }
+.mapa-controles button {
+  width: 38px; height: 38px; padding: 0; text-align: center; font-size: 1.1rem; line-height: 1;
+  background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(3px);
+  border-color: var(--line);
+}
+.mapa-ayuda { text-align: center; margin: 8px 0 0; }
+
+/* ── ficha del maestro ── */
+#ficha-modal {
+  position: fixed; inset: 0; z-index: 60; display: none;
+  align-items: center; justify-content: center; padding: 20px;
+  background: color-mix(in srgb, #000 72%, transparent); backdrop-filter: blur(4px);
+}
+#ficha-modal.on { display: flex; animation: rise .25s ease both; }
+.ficha {
+  position: relative; background: var(--paper); border: 1px solid var(--accent); border-radius: 3px;
+  max-width: 560px; width: 100%; max-height: 86vh; overflow-y: auto; padding: 24px 22px;
+}
+.ficha-cerrar { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; padding: 0; border: none; color: var(--dim); font-size: 1rem; }
+.ficha-cerrar:hover { color: var(--ink); background: none; }
+.ficha-cab { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; }
+.ficha-fig { width: 74px; height: 96px; flex: 0 0 74px; }
+.ficha-cab h2 { margin: 0; font-size: 1.3rem; }
+.ficha-datos { margin: 0 0 16px; padding-left: 18px; }
+.ficha-datos li { margin-bottom: 10px; }
+.ficha-frase { border-left: 2px solid var(--accent); padding-left: 14px; font-style: italic; color: var(--dim); margin: 0; }
+body.espacio .ficha-frase { font-style: normal; }
+
+/* ── pista (solo el dueño) ── */
+.pista { margin-top: 18px; border: 1px dashed var(--accent); border-radius: 2px; background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.pista summary { cursor: pointer; padding: 10px 12px; font-size: .9rem; color: var(--accent); }
+.pista-cuerpo { padding: 0 14px 14px; font-size: .86rem; }
+.pista-cuerpo p { margin: 0 0 10px; }
+.pista-cuerpo code { background: color-mix(in srgb, var(--ink) 10%, transparent); padding: 1px 5px; border-radius: 2px; font-size: .8rem; font-family: var(--font-e); }
+.pista .ojo { color: var(--bad); }
 
 /* ── la escena del maestro ── */
 .escena {
@@ -282,8 +337,18 @@ body.espacio .reply .dice { font-style: normal; }
 .reply.n { border-color: var(--bad); }
 .nav { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
+/* ── el botón de la ficha, arriba de la escena ── */
+.quien-btn {
+  position: absolute; top: 10px; right: 10px; width: auto; padding: 7px 12px;
+  font-size: .78rem; letter-spacing: .04em; color: var(--ink);
+  background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(3px);
+  border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
 /* ── veredicto ── */
-.verdict { text-align: center; padding: 6vh 0 0; }
+.verdict { text-align: center; padding: 4vh 0 0; }
+.v-retrato { height: 130px; margin-bottom: 10px; }
+.v-retrato svg { height: 100%; width: auto; }
 .verdict .stamp { font-size: 1.9rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
 .verdict.ok .stamp { color: var(--good); }
 .verdict.no .stamp { color: var(--bad); }
@@ -323,5 +388,6 @@ footer { margin-top: 42px; padding-top: 16px; border-top: 1px solid var(--line);
   .logo { font-size: 3.2rem; }
   .q { font-size: 1.16rem; }
   .escena { height: 38vh; min-height: 220px; }
+  .mapa-zoom { height: 58vh; }
   body { font-size: 16px; }
 }

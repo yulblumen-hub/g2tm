@@ -22,6 +22,20 @@ Desde el navegador: *Compartir → Agregar a inicio* (iPhone) o *Instalar app* (
 
 > Si cambiás cualquier archivo del juego, subí el número de `CACHE` en `sw.js`. Si no, los celulares que ya la tienen instalada siguen abriendo la versión vieja.
 
+## El mapa
+
+Un mapa navegable de la Tierra al borde del sistema: arrastrás para moverte, rueda o dos dedos para el zoom, y el botón ◎ te devuelve a donde estás. Los maestros aprobados quedan con tilde; los que faltan, en silueta. Tocando uno ya aprobado se abre su ficha.
+
+## Las fichas
+
+Cada maestro tiene un botón **¿quién es?** arriba de la escena: quién fue, cuándo, dónde, cuatro datos y una frase. Para los que existieron de verdad, los datos son reales — Sócrates no escribió nada, a Hakuin lo acusaron en falso y contestó "¿ah, sí?", los anillos de Saturno tienen menos de diez metros de espesor.
+
+## Pistas
+
+Escribiendo tu nombre en la portada (o entrando con `?hints` en la URL) se activa un panel plegable en cada pregunta: qué suma, qué resta, las palabras que premia y las que hunde, y cuánto necesitás. Se genera solo desde los pesos del maestro, así que nunca queda desactualizado.
+
+No es seguridad: el código es público y cualquiera que lo lea encuentra el nombre. Es un secreto de cortesía. Para que fuera de verdad privado haría falta un backend, y eso cuesta plata.
+
 ## Cómo está hecho
 
 HTML + CSS + JS a mano. Sin dependencias, sin build, sin backend, sin costo. El progreso y las preguntas ya vistas se guardan en `localStorage`.

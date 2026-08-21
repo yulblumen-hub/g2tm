@@ -130,6 +130,48 @@ const RETRATOS = {
     <path class="boca" d="M83 142c11 7 24 4 33-5" stroke="#7f1d1d" stroke-width="3" fill="none" stroke-linecap="round"/>
   </g>`,
 
+  /* ───────── ANITA ─────────
+     La única maestra viva del juego. Nada de halos: luz de tarde en un patio. */
+  anita: `
+  <g class="cuerpo">
+    <!-- pelo, capa de atrás -->
+    <path d="M100 40c-38 0-58 26-58 62 0 34 6 62 12 84h92c6-22 12-50 12-84 0-36-20-62-58-62z" fill="#3b2317"/>
+    <path d="M52 120c-4 26-2 48 2 66-8-20-10-44-2-66zM148 120c4 26 2 48-2 66 8-20 10-44 2-66z" fill="#4a2d1c"/>
+    <!-- remera -->
+    <path d="M100 178c-44 0-72 26-78 62h156c-6-36-34-62-78-62z" fill="#0f766e"/>
+    <path d="M100 178c-13 0-25 3-35 8 8 12 21 20 35 20s27-8 35-20c-10-5-22-8-35-8z" fill="#115e59"/>
+    <path d="M64 192c-6 16-8 30-8 46M136 192c6 16 8 30 8 46" stroke="#134e4a" stroke-width="2" fill="none"/>
+    <!-- cuello -->
+    <path d="M86 148h28v30c0 8-28 8-28 0z" fill="#d9a273"/>
+    <path d="M86 156c8 7 20 7 28 0" stroke="#c08a5c" stroke-width="2" fill="none"/>
+    <!-- cara -->
+    <ellipse cx="100" cy="100" rx="42" ry="50" fill="#e8bb8d"/>
+    <path d="M100 50c-24 0-42 20-42 46 0 5 1 10 2 15 3-25 20-42 40-42s37 17 40 42c1-5 2-10 2-15 0-26-18-46-42-46z" fill="#f0cba4" opacity=".55"/>
+    <!-- flequillo y mechones al frente -->
+    <path d="M100 48c-26 0-42 20-42 44 4-14 10-22 18-26 8 10 16 14 24 14s16-4 24-14c8 4 14 12 18 26 0-24-16-44-42-44z" fill="#4a2d1c"/>
+    <path d="M60 92c-3 22-2 40 2 54-8-18-9-38-2-54zM140 92c3 22 2 40-2 54 8-18 9-38 2-54z" fill="#3b2317"/>
+    <!-- aros -->
+    <circle class="aro" cx="58" cy="112" r="5" fill="none" stroke="#f4c542" stroke-width="2.5"/>
+    <circle class="aro" cx="142" cy="112" r="5" fill="none" stroke="#f4c542" stroke-width="2.5"/>
+    <!-- cejas -->
+    <path d="M74 88c6-5 15-5 20-1M126 88c-6-5-15-5-20-1" stroke="#3b2317" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- ojos -->
+    <ellipse cx="84" cy="100" rx="9" ry="6.5" fill="#fff"/>
+    <ellipse cx="116" cy="100" rx="9" ry="6.5" fill="#fff"/>
+    <circle class="pupI" cx="84" cy="100" r="4.4" fill="#3b2317"/>
+    <circle class="pupD" cx="116" cy="100" r="4.4" fill="#3b2317"/>
+    <circle cx="82" cy="98" r="1.6" fill="#fff"/>
+    <circle cx="114" cy="98" r="1.6" fill="#fff"/>
+    <path class="parpI" d="M75 100c5-7 13-7 18 0" stroke="#3b2317" stroke-width="2.2" fill="none"/>
+    <path class="parpD" d="M107 100c5-7 13-7 18 0" stroke="#3b2317" stroke-width="2.2" fill="none"/>
+    <!-- nariz -->
+    <path d="M100 104v14c0 3-3 5-6 5" stroke="#c2915f" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <!-- boca: media sonrisa que no te dice si vas bien -->
+    <path class="boca" d="M87 132c8 7 19 6 26-2" stroke="#a8543c" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="76" cy="120" r="6" fill="#e0967a" opacity=".3"/>
+    <circle cx="124" cy="120" r="6" fill="#e0967a" opacity=".3"/>
+  </g>`,
+
   /* ───────── SÓCRATES ───────── */
   socrates: `
   <g class="cuerpo">
@@ -484,6 +526,51 @@ const FONDOS = {
       <circle cx="310" cy="195" r="1.7"/><circle cx="55" cy="200" r="1.5"/><circle cx="350" cy="230" r="2"/>
     </g>
     <path d="M0 0h400v90c-60 20-120 0-200 10S60 130 0 110z" fill="#0a0a0a" opacity=".55"/>`,
+
+  /* un patio a las siete de la tarde: plantas, mate, ropa colgada */
+  anita: `
+    <defs><linearGradient id="fan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b2a4a"/><stop offset=".45" stop-color="#c2643c"/><stop offset="1" stop-color="#f0a868"/>
+    </linearGradient></defs>
+    <rect width="400" height="300" fill="url(#fan)"/>
+    <circle cx="60" cy="90" r="26" fill="#fde68a" opacity=".45"/>
+    <!-- pared del fondo -->
+    <path d="M0 150h400v150H0z" fill="#8a5a3c"/>
+    <path d="M0 150h400v10H0z" fill="#a86b47"/>
+    <g stroke="#6b4430" stroke-width="1.5" opacity=".5">
+      <path d="M0 178h400M0 206h400M0 234h400M60 150v84M150 150v84M250 150v84M340 150v84"/>
+    </g>
+    <!-- ropa colgada -->
+    <path d="M0 108c80 26 200 26 400-4" stroke="#5c4033" stroke-width="2" fill="none"/>
+    <g opacity=".9">
+      <path d="M40 118h34v40l-8 8h-18l-8-8z" fill="#e8dcc8"/>
+      <path d="M96 122h26v34l-6 6h-14l-6-6z" fill="#7dd3c0"/>
+      <path d="M300 116h30v38l-7 7h-16l-7-7z" fill="#f4c542"/>
+      <path d="M348 112h24v30l-5 5h-14l-5-5z" fill="#e8dcc8"/>
+    </g>
+    <!-- plantas -->
+    <g>
+      <path d="M16 300v-60" stroke="#3f6b3a" stroke-width="5"/>
+      <ellipse cx="16" cy="238" rx="22" ry="14" transform="rotate(-24 16 238)" fill="#4d8446"/>
+      <ellipse cx="30" cy="256" rx="20" ry="12" transform="rotate(18 30 256)" fill="#3f6b3a"/>
+      <ellipse cx="2" cy="258" rx="18" ry="11" transform="rotate(-40 2 258)" fill="#5c9a52"/>
+      <path d="M2 300h32l-4-24H6z" fill="#a8623c"/>
+    </g>
+    <g>
+      <path d="M378 300v-52" stroke="#3f6b3a" stroke-width="4"/>
+      <ellipse cx="378" cy="248" rx="18" ry="11" transform="rotate(20 378 248)" fill="#4d8446"/>
+      <ellipse cx="362" cy="264" rx="16" ry="10" transform="rotate(-26 362 264)" fill="#5c9a52"/>
+      <path d="M362 300h32l-4-22h-24z" fill="#a8623c"/>
+    </g>
+    <!-- mate y termo en una mesita -->
+    <path d="M120 300v-32h60v32z" fill="#6b4430" opacity=".7"/>
+    <path d="M112 268h76v6h-76z" fill="#8a5a3c"/>
+    <path d="M132 268v-16c0-5 4-8 9-8s9 3 9 8v16z" fill="#4a3628"/>
+    <path d="M141 244l6-12" stroke="#c9c9c9" stroke-width="2.5"/>
+    <path d="M160 268v-30c0-4 3-6 7-6s7 2 7 6v30z" fill="#0f766e"/>
+    <g class="polvo" fill="#fde68a" opacity=".5">
+      <circle cx="220" cy="120" r="1.6"/><circle cx="270" cy="96" r="1.2"/><circle cx="180" cy="80" r="1.4"/>
+    </g>`,
 
   /* el ágora al mediodía: columnas, olivo, sombra corta */
   socrates: `
